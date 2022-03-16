@@ -1,7 +1,8 @@
+import { useCallback } from "react";
 /*
  * @Author: your name
  * @Date: 2022-01-24 17:29:17
- * @LastEditTime: 2022-01-25 14:13:05
+ * @LastEditTime: 2022-03-16 16:15:36
  * @LastEditors: Please set LastEditors
  * @Description: 请求配置文件
  * @FilePath: /jira/src/http/index.ts
@@ -54,8 +55,11 @@ export const useHttp = () => {
   // TODO ts Utility Types 用法:用泛型给它传入一个其他类型,然后utility Type对这个类型进行某种操作
   // JS中typeof是在runtime是运行的
   // TS中的typeof是在静态环境中运行的
-  return (...[endpoint, config]: Parameters<typeof http>) =>
-    http(endpoint, { ...config, token: user?.token });
+  return useCallback(
+    (...[endpoint, config]: Parameters<typeof http>) =>
+      http(endpoint, { ...config, token: user?.token }),
+    [user?.token]
+  );
 };
 
 // // 联合类型

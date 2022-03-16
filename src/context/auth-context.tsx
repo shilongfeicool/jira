@@ -1,12 +1,12 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 15:09:46
- * @LastEditTime: 2022-01-27 14:20:37
+ * @LastEditTime: 2022-03-16 17:40:19
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/context/auth-context.tsx
  */
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useCallback } from "react";
 import * as auth from "auth-provider";
 import { User } from "secreens/project-list/search-panel";
 import { useMount } from "utils";
@@ -65,9 +65,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     return auth.logout().then(() => setUser(null));
   };
-  useMount(() => {
-    run(bootstrapUser());
-  });
+  useMount(
+    useCallback(() => {
+      run(bootstrapUser());
+    }, [run])
+  );
   if (isIdle || isLoading) {
     return <FullPageLoading />;
   }

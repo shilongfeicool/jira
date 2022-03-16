@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 18:04:45
- * @LastEditTime: 2022-03-16 16:04:40
+ * @LastEditTime: 2022-03-16 17:35:47
  * @LastEditors: Please set LastEditors
  * @Description: Utils
  * @FilePath: /jira/src/utils/index.ts
@@ -11,7 +11,10 @@ export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
 export const isVoid = (value: unknown) =>
   value === undefined || value === null || value === "";
 
-export const cleanObject = (object: Record<string, any>) => {
+export const cleanObject = (object?: { [key: string]: unknown }) => {
+  if (!object) {
+    return {};
+  }
   const result = { ...object };
   Object.keys(object).forEach((key) => {
     const value = object[key];
@@ -26,8 +29,7 @@ export const useMount = (callBack: () => void) => {
   useEffect(() => {
     callBack();
     // TODO 依赖项里加上callback会造成无限循环,这个和useCallback以及useMemo有关系
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [callBack]);
 };
 
 export const useDebounce = <T>(value: T, delay?: number) => {
@@ -80,6 +82,26 @@ export const useDocumentTitle = (
 };
 
 export const resetRoute = () => (window.location.href = window.location.origin);
+
+/**
+ * @name 传入一个对象,和键集合,返回对应的对象中的键值对
+ * @param obj
+ * @param keys
+ * @returns
+ *
+ */
+export const subSet = <
+  O extends { [key in string]: unknown },
+  K extends keyof O
+>(
+  obj: O,
+  keys: K[]
+) => {
+  const filteredEntries = Object.entries(obj).filter(([key]) =>
+    keys.includes(key as K)
+  );
+  return Object.fromEntries(filteredEntries) as Pick<O, K>;
+};
 
 /**
  * 返回组件的挂载状态,如果还没挂载或者已经卸载,返回false,反之返回true
