@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useMountedRef } from "utils";
 /*
  * @Author: your name
  * @Date: 2022-01-26 14:53:30
- * @LastEditTime: 2022-03-15 18:41:01
+ * @LastEditTime: 2022-03-16 16:06:11
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/utils/use-async.ts
@@ -23,6 +24,7 @@ export const useAsync = <D>(initialState?: State<D>) => {
     ...defaultInitialState,
     ...initialState,
   });
+  const mountedRef = useMountedRef();
   // useState传入函数是惰性初始化 可以使用回调返回的方式或者useRef
   // const [callBack,setCallBack] = useState(()=>()=>{alert('111')})
   const [retry, setRetry] = useState(() => () => {});
@@ -48,7 +50,9 @@ export const useAsync = <D>(initialState?: State<D>) => {
     });
     return promise
       .then((data) => {
-        setData(data);
+        if (mountedRef.current) {
+          setData(data);
+        }
         return data;
       })
       .catch((error) => {
