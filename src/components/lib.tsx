@@ -1,15 +1,15 @@
-import styled from "@emotion/styled";
-import { Spin, Typography } from "antd";
-import { DevTools } from "jira-dev-tool";
-
 /*
  * @Author: your name
  * @Date: 2022-01-25 16:56:16
- * @LastEditTime: 2022-01-27 14:21:46
+ * @LastEditTime: 2022-03-21 17:19:18
  * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: Lib组件
  * @FilePath: /jira/src/components/lib.tsx
  */
+import styled from "@emotion/styled";
+import { Button, Spin, Typography } from "antd";
+import { DevTools } from "jira-dev-tool";
+
 export const Row = styled.div<{
   gap?: number | boolean;
   between?: boolean;
@@ -51,3 +51,7 @@ export const FullPageErrorFallback = ({ error }: { error: Error | null }) => (
     <Typography.Text type="danger">{error?.message}</Typography.Text>
   </FullPage>
 );
+
+export const ButtonNoPadding = styled(Button)`
+  padding: 0;
+`;

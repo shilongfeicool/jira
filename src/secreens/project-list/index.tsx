@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-03-15 18:44:07
+ * @LastEditTime: 2022-03-21 17:25:02
  * @LastEditors: Please set LastEditors
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
@@ -11,14 +11,17 @@ import { useDebounce, useDocumentTitle } from "utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUsers } from "utils/user";
 import { useQueryParam } from "utils/url";
 import { useProjectSearchParams } from "./util";
+import { Row } from "components/lib";
 // import { Helmet } from "react-helmet";
 
-export const ProjectListSecreent = () => {
+export const ProjectListSecreent = (props: {
+  setProjectModalOpen: (isOpen: boolean) => void;
+}) => {
   useDocumentTitle("项目列表", false);
   //   const [, setParams] = useState({
   //     name: "",
@@ -39,7 +42,12 @@ export const ProjectListSecreent = () => {
       {/* <Helmet>
         <title>项目列表</title>
       </Helmet> */}
-      <h1>项目列表</h1>
+      <Row between={true}>
+        <h1>项目列表</h1>
+        <Button onClick={() => props.setProjectModalOpen(true)}>
+          创建项目
+        </Button>
+      </Row>
       <SearchPanel
         params={params}
         users={users || []}
@@ -53,6 +61,7 @@ export const ProjectListSecreent = () => {
         loading={isLoading}
         dataSource={list || []}
         users={users || []}
+        setProjectModalOpen={props.setProjectModalOpen}
       ></List>
     </Container>
   );
