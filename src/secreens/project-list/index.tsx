@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-03-21 17:35:06
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-12 17:35:04
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
  */
@@ -16,10 +16,12 @@ import { useProject } from "utils/project";
 import { useUsers } from "utils/user";
 import { useQueryParam } from "utils/url";
 import { useProjectSearchParams } from "./util";
-import { Row } from "components/lib";
+import { ButtonNoPadding, Row } from "components/lib";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "./project-list.slice";
 // import { Helmet } from "react-helmet";
 
-export const ProjectListSecreent = (props: { projectButton: JSX.Element }) => {
+export const ProjectListSecreent = () => {
   useDocumentTitle("项目列表", false);
   //   const [, setParams] = useState({
   //     name: "",
@@ -34,7 +36,7 @@ export const ProjectListSecreent = (props: { projectButton: JSX.Element }) => {
     retry,
   } = useProject(useDebounce(params, 300));
   const { data: users } = useUsers();
-
+  const dispatch = useDispatch();
   return (
     <Container>
       {/* <Helmet>
@@ -42,7 +44,12 @@ export const ProjectListSecreent = (props: { projectButton: JSX.Element }) => {
       </Helmet> */}
       <Row between={true}>
         <h1>项目列表</h1>
-        {props.projectButton}
+        <ButtonNoPadding
+          type="link"
+          onClick={() => dispatch(projectListActions.openProjectModal())}
+        >
+          创建项目
+        </ButtonNoPadding>
       </Row>
       <SearchPanel
         params={params}
@@ -57,7 +64,6 @@ export const ProjectListSecreent = (props: { projectButton: JSX.Element }) => {
         loading={isLoading}
         dataSource={list || []}
         users={users || []}
-        projectButton={props.projectButton}
       ></List>
     </Container>
   );

@@ -1,17 +1,20 @@
 /*
  * @Author: your name
  * @Date: 2022-03-21 15:35:20
- * @LastEditTime: 2022-03-21 17:28:12
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-12 17:30:08
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/components/project-opover.tsx
  */
 import styled from "@emotion/styled";
 import { Divider, List, Popover, Typography } from "antd";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "secreens/project-list/project-list.slice";
 import { useProject } from "utils/project";
 import { ButtonNoPadding } from "./lib";
 
-export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
+export const ProjectPopover = () => {
+  const dispatch = useDispatch();
   const { data: projects, isLoading } = useProject();
   const pinnedProjects = projects?.filter((project) => project.pin);
   const content = (
@@ -25,7 +28,12 @@ export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
         ))}
       </List>
       <Divider></Divider>
-      {props.projectButton}
+      <ButtonNoPadding
+        type="link"
+        onClick={() => dispatch(projectListActions.openProjectModal())}
+      >
+        创建项目
+      </ButtonNoPadding>
     </ContentContainer>
   );
   return (
