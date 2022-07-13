@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:56
- * @LastEditTime: 2022-07-12 17:44:34
+ * @LastEditTime: 2022-07-13 14:45:52
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/secreens/project-list/list.tsx
@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import { Pin } from "components/pin";
 import { useEditProject } from "utils/project";
 import { ButtonNoPadding } from "components/lib";
-import { useDispatch } from "react-redux";
-import { projectListActions } from "./project-list.slice";
+import { useProjectModal } from "./util";
 // react-router与react-router-dom的关系,类似与react与react-dom/react-native/react-vr的关系
 export interface Project {
   id: number;
@@ -32,7 +31,7 @@ export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   const pinProject = (id: number) => (pin: boolean) =>
     mutate({ id, pin }).then(props.refresh);
-  const dispatch = useDispatch();
+  const { open } = useProjectModal();
   return (
     <Table
       pagination={false}
@@ -90,12 +89,7 @@ export const List = ({ users, ...props }: ListProps) => {
                 overlay={
                   <Menu>
                     <Menu.Item key={"edit"}>
-                      <ButtonNoPadding
-                        type="link"
-                        onClick={() =>
-                          dispatch(projectListActions.openProjectModal())
-                        }
-                      >
+                      <ButtonNoPadding type="link" onClick={open}>
                         编辑
                       </ButtonNoPadding>
                     </Menu.Item>

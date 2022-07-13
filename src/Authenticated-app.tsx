@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 16:11:40
- * @LastEditTime: 2022-07-12 17:52:34
+ * @LastEditTime: 2022-07-13 14:51:55
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/Authenticated-app.tsx
@@ -16,7 +16,6 @@ import { Button, Dropdown, Menu } from "antd";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Navigate, Route, Routes } from "react-router";
 import { resetRoute } from "utils";
-import { useState } from "react";
 import { ProjectModal } from "secreens/project-list/project-modal";
 import { ProjectPopover } from "components/project-popover";
 
@@ -38,9 +37,9 @@ export const AuthenticatedApp = () => {
 
   return (
     <Container>
-      <PageHeader />
-      <Main>
-        <Router>
+      <Router>
+        <PageHeader />
+        <Main>
           <Routes>
             <Route path={"/projects"} element={<ProjectListSecreent />} />
             <Route
@@ -49,9 +48,9 @@ export const AuthenticatedApp = () => {
             />
             <Route path="*" element={<Navigate to={"/projects"} replace />} />
           </Routes>
-        </Router>
-      </Main>
-      <ProjectModal />
+        </Main>
+        <ProjectModal />
+      </Router>
     </Container>
   );
 };
