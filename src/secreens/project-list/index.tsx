@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-07-13 14:48:58
+ * @LastEditTime: 2022-07-13 15:24:07
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
@@ -15,7 +15,7 @@ import { Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUsers } from "utils/user";
 import { useProjectModal, useProjectSearchParams } from "./util";
-import { ButtonNoPadding, Row } from "components/lib";
+import { ButtonNoPadding, ErorrBox, Row } from "components/lib";
 // import { Helmet } from "react-helmet";
 
 export const ProjectListSecreent = () => {
@@ -26,12 +26,7 @@ export const ProjectListSecreent = () => {
   //   });
   // 基本类型,可以放到依赖里;组件状态,可以放到依赖里;非组件状态对象,绝不可以放到依赖里
   const [params, setParams] = useProjectSearchParams();
-  const {
-    isLoading,
-    error,
-    data: list,
-    retry,
-  } = useProject(useDebounce(params, 300));
+  const { isLoading, error, data: list } = useProject(useDebounce(params, 300));
   const { data: users } = useUsers();
   const { open } = useProjectModal();
   return (
@@ -45,20 +40,9 @@ export const ProjectListSecreent = () => {
           创建项目
         </ButtonNoPadding>
       </Row>
-      <SearchPanel
-        params={params}
-        users={users || []}
-        setParams={setParams}
-      ></SearchPanel>
-      {error ? (
-        <Typography.Text type="danger">{error.message}</Typography.Text>
-      ) : null}
-      <List
-        refresh={retry}
-        loading={isLoading}
-        dataSource={list || []}
-        users={users || []}
-      />
+      <SearchPanel params={params} users={users || []} setParams={setParams} />
+      <ErorrBox error={error} />
+      <List loading={isLoading} dataSource={list || []} users={users || []} />
     </Container>
   );
 };

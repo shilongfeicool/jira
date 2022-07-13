@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 16:56:16
- * @LastEditTime: 2022-03-21 17:19:18
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-13 15:24:56
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: Lib组件
  * @FilePath: /jira/src/components/lib.tsx
  */
@@ -48,10 +48,19 @@ export const FullPageLoading = () => (
 export const FullPageErrorFallback = ({ error }: { error: Error | null }) => (
   <FullPage>
     <DevTools />
-    <Typography.Text type="danger">{error?.message}</Typography.Text>
+    <ErorrBox error={error} />
   </FullPage>
 );
 
+// 类型守卫
+const isError = (value: any): value is Error => value?.message;
+
+export const ErorrBox = ({ error }: { error: unknown }) => {
+  if (isError(error)) {
+    return <Typography.Text type="danger">{error.message}</Typography.Text>;
+  }
+  return null;
+};
 export const ButtonNoPadding = styled(Button)`
   padding: 0;
 `;

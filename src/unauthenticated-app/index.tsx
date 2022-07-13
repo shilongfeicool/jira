@@ -7,17 +7,19 @@ import logo from "assets/logo.svg";
 import left from "assets/left.svg";
 import right from "assets/right.svg";
 import { useDocumentTitle } from "utils";
+import { ErorrBox } from "components/lib";
 // import { Helmet } from "react-helmet";
 /*
  * @Author: your name
  * @Date: 2022-01-24 16:03:26
- * @LastEditTime: 2022-01-27 15:04:00
+ * @LastEditTime: 2022-07-13 15:37:04
  * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: 未登录状态
  * @FilePath: /jira/src/unauthenticated-app/index.tsx
  */
 export const UnauthenticatedApp = () => {
   const [isRegister, setIsRegister] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   useDocumentTitle("请登录注册以继续");
   return (
     <Container>
@@ -28,7 +30,12 @@ export const UnauthenticatedApp = () => {
       <Background />
       <ShadowCard>
         <Title>{isRegister ? "请注册" : "请登录"}</Title>
-        {isRegister ? <RegisterScreen /> : <LoginScreen />}
+        <ErorrBox error={error} />
+        {isRegister ? (
+          <RegisterScreen onError={setError} />
+        ) : (
+          <LoginScreen onError={setError} />
+        )}
         <Divider />
         <Button type="link" onClick={() => setIsRegister(!isRegister)}>
           {isRegister ? "已经有账号了?直接登录" : "没有账号?注册新账号"}
