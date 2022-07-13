@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-21 15:28:06
- * @LastEditTime: 2022-07-13 17:04:25
+ * @LastEditTime: 2022-07-13 18:14:03
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: modal
  * @FilePath: /jira/src/secreens/project-list/project-modal.tsx
@@ -14,14 +14,18 @@ import { ErorrBox } from "components/lib";
 import { UserSelect } from "components/user-select";
 import { useEffect } from "react";
 import { useAddProject, useEditProject } from "utils/project";
-import { useProjectModal } from "./util";
+import { useProjectModal, useProjectQueryKey } from "./util";
 
 export const ProjectModal = () => {
   const { projectModalOpen, close, eidtingProject, isLoading } =
     useProjectModal();
   const useMutateProject = eidtingProject ? useEditProject : useAddProject;
 
-  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject();
+  const {
+    mutateAsync,
+    error,
+    isLoading: mutateLoading,
+  } = useMutateProject(useProjectQueryKey());
   const [form] = useForm();
   const onFinish = (value: any) => {
     mutateAsync({ ...eidtingProject, ...value }).then(() => {

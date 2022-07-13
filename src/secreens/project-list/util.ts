@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-15 16:29:00
- * @LastEditTime: 2022-07-13 16:59:29
+ * @LastEditTime: 2022-07-13 18:15:16
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 工具类
  * @FilePath: /jira/src/secreens/project-list/util.ts
@@ -23,6 +23,11 @@ export const useProjectSearchParams = () => {
     ),
     setParams,
   ] as const;
+};
+
+export const useProjectQueryKey = () => {
+  const [params] = useProjectSearchParams();
+  return ["projects", params];
 };
 
 export const useProjectModal = () => {

@@ -1,14 +1,19 @@
 /*
  * @Author: your name
  * @Date: 2022-01-26 15:24:54
- * @LastEditTime: 2022-07-13 16:51:29
+ * @LastEditTime: 2022-07-13 18:26:55
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: project调用
  * @FilePath: /jira/src/utils/project.ts
  */
 import { useHttp } from "http/index";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { QueryKey, useMutation, useQuery } from "react-query";
 import { Project } from "secreens/project-list/list";
+import {
+  useEidtConfig,
+  useAddConfig,
+  useDeleteConfig,
+} from "./use-optimistic-options";
 
 export const useProject = (params?: Partial<Project>) => {
   const client = useHttp();
@@ -18,29 +23,26 @@ export const useProject = (params?: Partial<Project>) => {
   );
 };
 
-export const useEditProject = () => {
+export const useEditProject = (queryKey: QueryKey) => {
   const client = useHttp();
-  const queryClient = useQueryClient();
   return useMutation(
     (params: Partial<Project>) =>
       client(`projects/${params.id}`, {
         method: "PATCH",
         data: params,
       }),
-    { onSuccess: () => queryClient.invalidateQueries("projects") }
+    useEidtConfig(queryKey)
   );
 };
-export const useAddProject = () => {
+export const useAddProject = (queryKey: QueryKey) => {
   const client = useHttp();
-
-  const queryClient = useQueryClient();
   return useMutation(
     (params: Partial<Project>) =>
       client(`projects`, {
         method: "POST",
         data: params,
       }),
-    { onSuccess: () => queryClient.invalidateQueries("projects") }
+    useAddConfig(queryKey)
   );
 };
 
@@ -52,5 +54,16 @@ export const useProjectDetail = (id?: number) => {
     {
       enabled: !!id,
     }
+  );
+};
+
+export const useDeleteProject = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation(
+    ({ id }: { id: number }) =>
+      client(`projects/${id}`, {
+        method: "DELETE",
+      }),
+    useDeleteConfig(queryKey)
   );
 };
