@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:56
- * @LastEditTime: 2022-07-13 15:14:44
+ * @LastEditTime: 2022-07-13 16:46:14
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/secreens/project-list/list.tsx
@@ -28,8 +28,9 @@ interface ListProps extends TableProps<Project> {
 }
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
+  const { startEdit } = useProjectModal();
   const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
-  const { open } = useProjectModal();
+  const editProject = (id: number) => startEdit(id);
   return (
     <Table
       pagination={false}
@@ -87,9 +88,15 @@ export const List = ({ users, ...props }: ListProps) => {
                 overlay={
                   <Menu>
                     <Menu.Item key={"edit"}>
-                      <ButtonNoPadding type="link" onClick={open}>
+                      <ButtonNoPadding
+                        type="link"
+                        onClick={() => editProject(project.id)}
+                      >
                         编辑
                       </ButtonNoPadding>
+                    </Menu.Item>
+                    <Menu.Item key={"delete"}>
+                      <ButtonNoPadding type="link">删除</ButtonNoPadding>
                     </Menu.Item>
                   </Menu>
                 }

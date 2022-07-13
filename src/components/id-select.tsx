@@ -5,8 +5,8 @@ import { Raw } from "types";
 /*
  * @Author: your name
  * @Date: 2022-03-15 15:37:46
- * @LastEditTime: 2022-03-15 16:23:26
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-13 16:22:13
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/components/id-select.tsx
  */
@@ -16,8 +16,8 @@ interface IdSelectProps
     SelectProps,
     "value" | "onChange" | "defaultOptionName" | "options"
   > {
-  value: Raw | null | undefined;
-  onChange: (value?: number) => void;
+  value?: Raw | null | undefined;
+  onChange?: (value?: number) => void;
   defaultOptionName?: string;
   options?: { name: string; id: number }[];
 }
@@ -33,7 +33,7 @@ export const IdSelect = (props: IdSelectProps) => {
   return (
     <Select
       value={options?.length ? toNumber(value) : 0}
-      onChange={(value) => onChange(toNumber(value) || undefined)}
+      onChange={(value) => onChange?.(toNumber(value) || undefined)}
       {...restProps}
     >
       {defaultOptionName ? (

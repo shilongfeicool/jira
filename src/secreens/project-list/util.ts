@@ -1,13 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2022-03-15 16:29:00
- * @LastEditTime: 2022-07-13 14:52:52
+ * @LastEditTime: 2022-07-13 16:59:29
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 工具类
  * @FilePath: /jira/src/secreens/project-list/util.ts
  */
 
 import { useMemo } from "react";
+import { useProjectDetail } from "utils/project";
 import { useQueryParam } from "utils/url";
 
 export const useProjectSearchParams = () => {
@@ -28,13 +29,35 @@ export const useProjectModal = () => {
   const [{ projectCreate }, setProjectModalOpen] = useQueryParam([
     "projectCreate",
   ]);
+  const [{ editingProjectId }, setEditingProjectId] = useQueryParam([
+    "editingProjectId",
+  ]);
+  const { data: eidtingProject, isLoading } = useProjectDetail(
+    Number(editingProjectId)
+  );
 
   const open = () => setProjectModalOpen({ projectCreate: true });
-  const close = () => setProjectModalOpen({ projectCreate: undefined });
+  const close = () => {
+    setProjectModalOpen({
+      projectCreate: undefined,
+    });
+    if (editingProjectId) {
+      setEditingProjectId({
+        editingProjectId: undefined,
+      });
+    }
+  };
+
+  const startEdit = (id: number) => {
+    setEditingProjectId({ editingProjectId: id });
+  };
 
   return {
-    projectModalOpen: projectCreate === "true",
+    projectModalOpen: projectCreate === "true" || Boolean(eidtingProject),
     open,
     close,
+    startEdit,
+    eidtingProject,
+    isLoading,
   };
 };
