@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 15:09:46
- * @LastEditTime: 2022-03-16 17:40:19
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-19 14:50:28
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/context/auth-context.tsx
  */
@@ -13,6 +13,7 @@ import { useMount } from "utils";
 import { http } from "http/index";
 import { useAsync } from "utils/use-async";
 import { FullPageErrorFallback, FullPageLoading } from "components/lib";
+import { useQueryClient } from "react-query";
 
 interface AuthForm {
   username: string;
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setData: setUser,
   } = useAsync<User | null>();
 
+  const queryClient = useQueryClient();
   // point free
   const login = (from: AuthForm) => {
     return auth.login(from).then(setUser);
@@ -63,7 +65,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return auth.register(from).then(setUser);
   };
   const logout = () => {
-    return auth.logout().then(() => setUser(null));
+    return auth.logout().then(() => {
+      setUser(null);
+      queryClient.clear();
+    });
   };
   useMount(
     useCallback(() => {
