@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-21 15:28:06
- * @LastEditTime: 2022-07-13 18:14:03
+ * @LastEditTime: 2022-07-15 15:28:19
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: modal
  * @FilePath: /jira/src/secreens/project-list/project-modal.tsx
@@ -34,6 +34,11 @@ export const ProjectModal = () => {
     });
   };
 
+  const closeModal = () => {
+    form.resetFields();
+    close();
+  };
+
   const title = eidtingProject ? "编辑项目" : "创建项目";
 
   useEffect(() => {
@@ -43,7 +48,7 @@ export const ProjectModal = () => {
     <Drawer
       visible={projectModalOpen}
       width="100%"
-      onClose={close}
+      onClose={closeModal}
       forceRender={true}
     >
       <Container>

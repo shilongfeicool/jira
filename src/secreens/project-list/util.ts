@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-15 16:29:00
- * @LastEditTime: 2022-07-13 18:15:16
+ * @LastEditTime: 2022-07-15 15:29:51
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 工具类
  * @FilePath: /jira/src/secreens/project-list/util.ts
@@ -58,7 +58,7 @@ export const useProjectModal = () => {
   };
 
   return {
-    projectModalOpen: projectCreate === "true" || Boolean(eidtingProject),
+    projectModalOpen: projectCreate === "true" || Boolean(editingProjectId),
     open,
     close,
     startEdit,

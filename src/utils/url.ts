@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-03-08 17:45:49
- * @LastEditTime: 2022-03-16 16:47:35
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-15 15:04:48
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: url处理工具
  * @FilePath: /jira/src/utils/url.ts
  */
@@ -64,7 +64,7 @@ export const useQueryParam = <K extends string>(keys: K[]) => {
 };
 export const useSetUrlSearchParam = () => {
   const [searchParams, setSearchParam] = useSearchParams();
-  return (params: { [key in string]: unknown }) => {
+  return (params: Partial<{ [key in string]: unknown }>) => {
     const o = cleanObject({
       ...Object.fromEntries(searchParams),
       ...params,
