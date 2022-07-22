@@ -1,28 +1,20 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:56
- * @LastEditTime: 2022-07-13 18:27:19
+ * @LastEditTime: 2022-07-22 15:51:38
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/secreens/project-list/list.tsx
  */
 import { Dropdown, Menu, Modal, Table, TableProps } from "antd";
 import dayjs from "dayjs";
-import { User } from "./search-panel";
+import { User } from "types/User";
 import { Link } from "react-router-dom";
 import { Pin } from "components/pin";
 import { useDeleteProject, useEditProject } from "utils/project";
 import { ButtonNoPadding } from "components/lib";
 import { useProjectModal, useProjectQueryKey } from "./util";
-// react-router与react-router-dom的关系,类似与react与react-dom/react-native/react-vr的关系
-export interface Project {
-  id: number;
-  name: string;
-  personId: number;
-  pin: boolean;
-  organization: string;
-  created: number;
-}
+import { Project } from "types/Project";
 interface ListProps extends TableProps<Project> {
   users: User[];
 }

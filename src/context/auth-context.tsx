@@ -1,14 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 15:09:46
- * @LastEditTime: 2022-07-19 14:50:28
+ * @LastEditTime: 2022-07-22 15:51:28
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/context/auth-context.tsx
  */
 import React, { ReactNode, useCallback } from "react";
 import * as auth from "auth-provider";
-import { User } from "secreens/project-list/search-panel";
+import { User } from "types/User";
 import { useMount } from "utils";
 import { http } from "http/index";
 import { useAsync } from "utils/use-async";

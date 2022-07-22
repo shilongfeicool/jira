@@ -1,14 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2022-01-26 15:24:54
- * @LastEditTime: 2022-07-13 18:26:55
+ * @LastEditTime: 2022-07-22 15:45:41
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: project调用
  * @FilePath: /jira/src/utils/project.ts
  */
 import { useHttp } from "http/index";
 import { QueryKey, useMutation, useQuery } from "react-query";
-import { Project } from "secreens/project-list/list";
+import { Project } from "types/Project";
 import {
   useEidtConfig,
   useAddConfig,

@@ -1,9 +1,9 @@
-import { User } from "secreens/project-list/search-panel";
+import { User } from "types/User";
 /*
  * @Author: your name
  * @Date: 2022-01-24 14:54:58
- * @LastEditTime: 2022-01-24 15:26:21
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-07-22 15:51:06
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 在真实环境中,如果使用firebase这种第三方auth服务的话,本文件不需开发者开发
  * @FilePath: /jira/src/auth-provider.ts
  */
