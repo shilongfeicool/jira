@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-26 15:24:54
- * @LastEditTime: 2022-07-22 15:45:41
+ * @LastEditTime: 2022-07-22 16:20:39
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: project调用
  * @FilePath: /jira/src/utils/project.ts
@@ -48,7 +48,7 @@ export const useAddProject = (queryKey: QueryKey) => {
 
 export const useProjectDetail = (id?: number) => {
   const client = useHttp();
-  return useQuery<Project[]>(
+  return useQuery<Project>(
     ["project", { id }],
     () => client(`projects/${id}`),
     {
