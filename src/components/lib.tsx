@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 16:56:16
- * @LastEditTime: 2022-07-13 15:24:56
+ * @LastEditTime: 2022-08-05 16:27:07
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: Lib组件
  * @FilePath: /jira/src/components/lib.tsx
@@ -63,4 +63,10 @@ export const ErorrBox = ({ error }: { error: unknown }) => {
 };
 export const ButtonNoPadding = styled(Button)`
   padding: 0;
+`;
+
+export const ScreenContanier = styled.div`
+  padding: 3.2rem;
+  display: flex;
+  flex-direction: column;
 `;

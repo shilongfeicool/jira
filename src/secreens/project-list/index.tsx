@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-07-13 15:24:07
+ * @LastEditTime: 2022-08-05 16:27:31
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
@@ -11,7 +11,6 @@ import { useDebounce, useDocumentTitle } from "utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
-import { Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUsers } from "utils/user";
 import { useProjectModal, useProjectSearchParams } from "./util";

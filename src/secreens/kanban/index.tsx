@@ -1,12 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2022-03-08 17:14:51
- * @LastEditTime: 2022-08-05 16:21:12
+ * @LastEditTime: 2022-08-05 16:43:49
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description:kanban
  * @FilePath: /jira/src/secreens/kanban/index.tsx
  */
 import styled from "@emotion/styled";
+import { ScreenContanier } from "components/lib";
 import { useDocumentTitle } from "utils";
 import { useKanbans } from "utils/kanban";
 import { KanbanColumn } from "./kanban-column";
@@ -19,7 +20,7 @@ export const KanbanScreen = () => {
   const { data: kanbans } = useKanbans(useKanbanSearchParams());
   console.log(currentProject);
   return (
-    <div>
+    <ScreenContanier>
       <h1>{currentProject?.name}看板</h1>
       <SearchPanel />
       <Container>
@@ -27,12 +28,12 @@ export const KanbanScreen = () => {
           <KanbanColumn key={kanban.id} kanban={kanban}></KanbanColumn>
         ))}
       </Container>
-    </div>
+    </ScreenContanier>
   );
 };
 
 const Container = styled.div`
   display: flex;
-  overflow: hidden;
-  margin-right: 2rem;
+  overflow-x: scroll;
+  flex: 1;
 `;
