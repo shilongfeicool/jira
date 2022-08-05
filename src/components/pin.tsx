@@ -1,9 +1,9 @@
 /*
  * @Author: your name
  * @Date: 2022-03-15 16:54:10
- * @LastEditTime: 2022-03-15 17:02:00
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @LastEditTime: 2022-08-05 16:17:41
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
+ * @Description: ProjectPopover
  * @FilePath: /jira/src/components/pin.tsx
  */
 import { Rate } from "antd";

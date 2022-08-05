@@ -3,9 +3,9 @@ import React from "react";
 /*
  * @Author: your name
  * @Date: 2022-01-27 14:28:09
- * @LastEditTime: 2022-01-27 14:40:41
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @LastEditTime: 2022-08-05 16:18:17
+ * @LastEditors: 石龙飞 shilongfei@cheyipai.com
+ * @Description: ErrorVBoundary
  * @FilePath: /jira/src/components/error-boundary.tsx
  */
 // children fallbackRender
