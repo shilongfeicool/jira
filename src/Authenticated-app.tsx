@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 16:11:40
- * @LastEditTime: 2022-08-05 16:41:19
+ * @LastEditTime: 2022-08-05 16:55:40
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/Authenticated-app.tsx
@@ -110,7 +110,6 @@ const Header = styled(Row)`
 const HeaderLeft = styled(Row)``;
 const HeaderRight = styled.div``;
 const Main = styled.main`
-  grid-area: main;
   display: flex;
   overflow: hidden;
 `;

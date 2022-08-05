@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-08-05 16:27:31
+ * @LastEditTime: 2022-08-05 17:00:52
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
@@ -14,7 +14,12 @@ import styled from "@emotion/styled";
 import { useProject } from "utils/project";
 import { useUsers } from "utils/user";
 import { useProjectModal, useProjectSearchParams } from "./util";
-import { ButtonNoPadding, ErorrBox, Row } from "components/lib";
+import {
+  ButtonNoPadding,
+  ErorrBox,
+  Row,
+  ScreenContanier,
+} from "components/lib";
 // import { Helmet } from "react-helmet";
 
 export const ProjectListSecreent = () => {
@@ -49,4 +54,5 @@ export const ProjectListSecreent = () => {
 ProjectListSecreent.whyDidYouRender = true;
 const Container = styled.div`
   padding: 3.2rem;
+  flex: 1;
 `;
