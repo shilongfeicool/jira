@@ -2,14 +2,14 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:00:05
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 15:43:39
+ * @LastEditTime: 2022-12-07 17:42:11
  * @FilePath: /jira-project/src/utils/task.ts
  * @Description:task
  */
 import { useHttp } from "http/index";
 import { QueryKey, useMutation, useQuery } from "react-query";
 import { Task } from "types/Task";
-import { useAddConfig } from "./use-optimistic-options";
+import { useAddConfig, useEidtConfig } from "./use-optimistic-options";
 
 export const useTasks = (params?: Partial<Task>) => {
   const client = useHttp();
@@ -28,5 +28,24 @@ export const useAddTask = (queryKey: QueryKey) => {
         data: params,
       }),
     useAddConfig(queryKey)
+  );
+};
+
+export const useTaskDetail = (id?: number) => {
+  const client = useHttp();
+  return useQuery<Task>(["task", { id }], () => client(`tasks/${id}`), {
+    enabled: !!id,
+  });
+};
+
+export const useEditTask = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation(
+    (params: Partial<Task>) =>
+      client(`tasks/${params.id}`, {
+        method: "PATCH",
+        data: params,
+      }),
+    useEidtConfig(queryKey)
   );
 };

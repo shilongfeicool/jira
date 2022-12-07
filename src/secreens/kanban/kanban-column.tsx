@@ -2,14 +2,14 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:23:58
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 16:39:30
+ * @LastEditTime: 2022-12-07 17:46:27
  * @FilePath: /jira-project/src/secreens/kanban/kanban-column.tsx
  * @Description: 列
  */
 import { Kanban } from "types/Kanban";
 import { useTasks } from "utils/task";
 import { useTaskType } from "utils/task-type";
-import { useTasksSearchParams } from "./util";
+import { useTaskModal, useTasksSearchParams } from "./util";
 import taskIcon from "assets/task.svg";
 import bugIcon from "assets/bug.svg";
 import styled from "@emotion/styled";
@@ -28,12 +28,18 @@ const TaskTypeIcon = ({ id }: { id: number }) => {
 export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
   const { data: allTasks } = useTasks(useTasksSearchParams());
   const tasks = allTasks?.filter((task) => task.kanbanId === kanban.id);
+  const { startEdit } = useTaskModal();
+
   return (
     <Contanier>
       <h3>{kanban.name}</h3>
       <TaskContanier>
         {tasks?.map((tasks) => (
-          <Card key={tasks.id} style={{ marginBottom: "0.5rem" }}>
+          <Card
+            key={tasks.id}
+            style={{ marginBottom: "0.5rem", cursor: "pointer" }}
+            onClick={() => startEdit(tasks.id)}
+          >
             <div>{tasks.name}</div>
             <TaskTypeIcon id={tasks.id} />
           </Card>
