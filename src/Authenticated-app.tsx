@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-24 16:11:40
- * @LastEditTime: 2022-08-05 16:55:40
+ * @LastEditTime: 2022-12-07 15:07:19
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/Authenticated-app.tsx
@@ -98,6 +98,8 @@ const Container = styled.div`
   grid-template-columns: 20rem 1fr 20rem;
   grid-template-areas: "header header header" "nav main aside"; */
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   /* grid-gap: 10rem; */
 `;
 
@@ -112,4 +114,5 @@ const HeaderRight = styled.div``;
 const Main = styled.main`
   display: flex;
   overflow: hidden;
+  flex: 1;
 `;

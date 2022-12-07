@@ -2,9 +2,9 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-13 17:49:07
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-07-13 18:14:19
+ * @LastEditTime: 2022-12-07 14:47:21
  * @FilePath: /jira-project/src/utils/use-optimistic-options.ts
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: react-query配置
  */
 import { QueryKey, useQueryClient } from "react-query";
 

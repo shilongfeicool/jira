@@ -2,18 +2,31 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:00:05
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-07-22 16:00:14
+ * @LastEditTime: 2022-12-07 15:43:39
  * @FilePath: /jira-project/src/utils/task.ts
  * @Description:task
  */
 import { useHttp } from "http/index";
-import { useQuery } from "react-query";
+import { QueryKey, useMutation, useQuery } from "react-query";
 import { Task } from "types/Task";
+import { useAddConfig } from "./use-optimistic-options";
 
 export const useTasks = (params?: Partial<Task>) => {
   const client = useHttp();
 
   return useQuery<Task[], Error>(["tasks", params], () =>
     client("tasks", { data: params })
+  );
+};
+
+export const useAddTask = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation(
+    (params: Partial<Task>) =>
+      client(`tasks`, {
+        method: "POST",
+        data: params,
+      }),
+    useAddConfig(queryKey)
   );
 };

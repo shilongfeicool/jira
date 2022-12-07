@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-08 15:57:55
- * @LastEditTime: 2022-08-05 16:43:09
+ * @LastEditTime: 2022-12-07 15:35:42
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: ProjectScreen
  * @FilePath: /jira/src/secreens/screens/index.tsx
@@ -50,9 +50,11 @@ const Aside = styled.aside`
 const Main = styled.div`
   display: flex;
   box-shadow: -5px 0 5px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 `;
 
 const Contanier = styled.div`
   display: grid;
   grid-template-columns: 16rem 1fr;
+  overflow: hidden;
 `;

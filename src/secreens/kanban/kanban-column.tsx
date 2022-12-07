@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:23:58
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-08-05 15:50:35
+ * @LastEditTime: 2022-12-07 16:39:30
  * @FilePath: /jira-project/src/secreens/kanban/kanban-column.tsx
  * @Description: 列
  */
@@ -14,6 +14,7 @@ import taskIcon from "assets/task.svg";
 import bugIcon from "assets/bug.svg";
 import styled from "@emotion/styled";
 import { Card } from "antd";
+import { CreateTask } from "./create-task";
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskType();
@@ -21,7 +22,7 @@ const TaskTypeIcon = ({ id }: { id: number }) => {
   if (!name) {
     return null;
   }
-  return <img src={name === "task" ? taskIcon : bugIcon} alt="" />;
+  return <img src={name === "task" ? taskIcon : bugIcon} alt={"task-icon"} />;
 };
 
 export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
@@ -37,12 +38,13 @@ export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
             <TaskTypeIcon id={tasks.id} />
           </Card>
         ))}
+        <CreateTask kanbanId={kanban.id} />
       </TaskContanier>
     </Contanier>
   );
 };
 
-const Contanier = styled.div`
+export const Contanier = styled.div`
   min-width: 27rem;
   border-radius: 6px;
   background-color: rgb(244, 245, 247);

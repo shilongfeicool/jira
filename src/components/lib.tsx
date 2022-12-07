@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-01-25 16:56:16
- * @LastEditTime: 2022-08-05 16:27:07
+ * @LastEditTime: 2022-12-07 15:37:33
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: Lib组件
  * @FilePath: /jira/src/components/lib.tsx
@@ -69,4 +69,6 @@ export const ScreenContanier = styled.div`
   padding: 3.2rem;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
 `;
