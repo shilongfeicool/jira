@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-12-07 17:22:21
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 17:49:28
+ * @LastEditTime: 2022-12-07 18:21:24
  * @FilePath: /jira-project/src/secreens/kanban/task-modal.tsx
  * @Description: 编辑弹窗
  */
@@ -59,14 +59,14 @@ export const TaskModal = () => {
         <Form.Item
           label="经办人"
           name={"processorId"}
-          rules={[{ required: true, message: "请输入任务名" }]}
+          rules={[{ required: true, message: "请选择经办人" }]}
         >
           <UserSelect defaultOptionName="经办人" />
         </Form.Item>
         <Form.Item
           label="类型"
           name={"typeId"}
-          rules={[{ required: true, message: "请输入任务名" }]}
+          rules={[{ required: true, message: "请选择类型" }]}
         >
           <TaskTypeSelect />
         </Form.Item>
