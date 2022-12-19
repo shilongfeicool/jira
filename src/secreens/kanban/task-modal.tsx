@@ -2,16 +2,16 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-12-07 17:22:21
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 18:21:24
+ * @LastEditTime: 2022-12-19 14:47:49
  * @FilePath: /jira-project/src/secreens/kanban/task-modal.tsx
  * @Description: 编辑弹窗
  */
-import { Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { TaskTypeSelect } from "components/task-type-select";
 import { UserSelect } from "components/user-select";
 import { useEffect } from "react";
-import { useEditTask } from "utils/task";
+import { useDeleteTask, useEditTask } from "utils/task";
 import { useTaskModal, useTasksQueryKey } from "./util";
 
 const layout = {
@@ -25,6 +25,7 @@ export const TaskModal = () => {
   const { mutateAsync: editTask, isLoading: editLoading } = useEditTask(
     useTasksQueryKey()
   );
+  const { mutateAsync: deleteTask } = useDeleteTask(useTasksQueryKey());
   const onCancel = () => {
     close();
     form.resetFields();
@@ -37,6 +38,16 @@ export const TaskModal = () => {
   useEffect(() => {
     form.setFieldsValue(editingTask);
   }, [editingTask, form]);
+  const startDelete = () => {
+    Modal.confirm({
+      okText: "确定",
+      cancelText: "取消",
+      title: "确定删除面板吗?",
+      onOk() {
+        deleteTask({ id: Number(aditTaskId) });
+      },
+    });
+  };
   return (
     <Modal
       forceRender
@@ -71,6 +82,11 @@ export const TaskModal = () => {
           <TaskTypeSelect />
         </Form.Item>
       </Form>
+      <div style={{ textAlign: "right" }}>
+        <Button size="small" style={{ fontSize: "14px" }} onClick={startDelete}>
+          删除
+        </Button>
+      </div>
     </Modal>
   );
 };
