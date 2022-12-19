@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:23:58
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-19 14:44:05
+ * @LastEditTime: 2022-12-19 17:55:14
  * @FilePath: /jira-project/src/secreens/kanban/kanban-column.tsx
  * @Description: 列
  */
@@ -19,6 +19,7 @@ import { Task } from "types/Task";
 import { Mark } from "components/mark";
 import { useDeleteKanban } from "utils/kanban";
 import { Row } from "components/lib";
+import React from "react";
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskType();
@@ -46,25 +47,28 @@ const TaskCard = ({ task }: { task: Task }) => {
   );
 };
 
-export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
+export const KanbanColumn = React.forwardRef<
+  HTMLDivElement,
+  { kanban: Kanban }
+>(({ kanban, ...props }, ref) => {
   const { data: allTasks } = useTasks(useTasksSearchParams());
   const tasks = allTasks?.filter((task) => task.kanbanId === kanban.id);
 
   return (
-    <Contanier>
+    <Contanier {...props} ref={ref}>
       <Row>
         <h3>{kanban.name}</h3>
-        <More kanban={kanban} />
+        <More kanban={kanban} key={kanban.id} />
       </Row>
       <TaskContanier>
-        {tasks?.map((tasks, index) => (
-          <TaskCard task={tasks} key={index} />
+        {tasks?.map((tasks) => (
+          <TaskCard task={tasks} key={tasks.id} />
         ))}
         <CreateTask kanbanId={kanban.id} />
       </TaskContanier>
     </Contanier>
   );
-};
+});
 
 const More = ({ kanban }: { kanban: Kanban }) => {
   const { mutateAsync } = useDeleteKanban(useKanbansQueryKey());

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-08 17:14:51
- * @LastEditTime: 2022-12-07 17:41:50
+ * @LastEditTime: 2022-12-19 17:57:07
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description:kanban
  * @FilePath: /jira/src/secreens/kanban/index.tsx
@@ -21,6 +21,8 @@ import {
   useProjectInUrl,
   useTasksSearchParams,
 } from "./util";
+import { DragDropContext } from "react-beautiful-dnd";
+import { Drag, Drop, DropChild } from "components/drag-and-drop";
 
 export const KanbanScreen = () => {
   useDocumentTitle("看板列表");
@@ -32,25 +34,35 @@ export const KanbanScreen = () => {
   const isLoading = taskIsLoading || kanbanIsLoading;
 
   return (
-    <ScreenContanier>
-      <h1>{currentProject?.name}看板</h1>
-      <SearchPanel />
-      {isLoading ? (
-        <Spin size="large" />
-      ) : (
-        <ColumnContainer>
-          {kanbans?.map((kanban) => (
-            <KanbanColumn key={kanban.id} kanban={kanban}></KanbanColumn>
-          ))}
-          <CreateKanban />
-        </ColumnContainer>
-      )}
-      <TaskModal />
-    </ScreenContanier>
+    <DragDropContext onDragEnd={() => {}}>
+      <ScreenContanier>
+        <h1>{currentProject?.name}看板</h1>
+        <SearchPanel />
+        {isLoading ? (
+          <Spin size="large" />
+        ) : (
+          <Drop type="COLUMN" direction="horizontal" droppableId="kanban">
+            <ColumnContainer>
+              {kanbans?.map((kanban) => (
+                <Drag
+                  key={kanban.id}
+                  draggableId={"kanban" + kanban.id}
+                  index={kanban.id}
+                >
+                  <KanbanColumn key={kanban.id} kanban={kanban}></KanbanColumn>
+                </Drag>
+              ))}
+              <CreateKanban />
+            </ColumnContainer>
+          </Drop>
+        )}
+        <TaskModal />
+      </ScreenContanier>
+    </DragDropContext>
   );
 };
 
-export const ColumnContainer = styled.div`
+export const ColumnContainer = styled(DropChild)`
   display: flex;
   overflow-x: scroll;
   flex: 1;
