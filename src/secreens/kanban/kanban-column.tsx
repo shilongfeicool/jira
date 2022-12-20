@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:23:58
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-19 17:55:14
+ * @LastEditTime: 2022-12-20 18:41:38
  * @FilePath: /jira-project/src/secreens/kanban/kanban-column.tsx
  * @Description: 列
  */
@@ -20,6 +20,7 @@ import { Mark } from "components/mark";
 import { useDeleteKanban } from "utils/kanban";
 import { Row } from "components/lib";
 import React from "react";
+import { Drag, Drop, DropChild } from "components/drag-and-drop";
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskType();
@@ -56,14 +57,26 @@ export const KanbanColumn = React.forwardRef<
 
   return (
     <Contanier {...props} ref={ref}>
-      <Row>
+      <Row between>
         <h3>{kanban.name}</h3>
         <More kanban={kanban} key={kanban.id} />
       </Row>
       <TaskContanier>
-        {tasks?.map((tasks) => (
-          <TaskCard task={tasks} key={tasks.id} />
-        ))}
+        <Drop type="ROW" direction="vertical" droppableId={String(kanban.id)}>
+          <DropChild style={{ minHeight: "1rem" }}>
+            {tasks?.map((task, taskIndex) => (
+              <Drag
+                key={task.id}
+                index={taskIndex}
+                draggableId={"task" + task.id}
+              >
+                <div>
+                  <TaskCard task={task} key={task.id} />
+                </div>
+              </Drag>
+            ))}
+          </DropChild>
+        </Drop>
         <CreateTask kanbanId={kanban.id} />
       </TaskContanier>
     </Contanier>

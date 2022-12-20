@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-13 17:49:07
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 14:47:21
+ * @LastEditTime: 2022-12-20 18:24:40
  * @FilePath: /jira-project/src/utils/use-optimistic-options.ts
  * @Description: react-query配置
  */
@@ -46,3 +46,6 @@ export const useEidtConfig = (queryKey: QueryKey) =>
   );
 export const useAddConfig = (queryKey: QueryKey) =>
   useConfig(queryKey, (target, old) => (old ? [...old, target] : []));
+
+export const useReorderConfig = (queryKey: QueryKey) =>
+  useConfig(queryKey, (target, old) => old || []);

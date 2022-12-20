@@ -2,14 +2,18 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 15:57:39
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-19 14:31:07
+ * @LastEditTime: 2022-12-20 18:26:00
  * @FilePath: /jira-project/src/utils/kanban.ts
  * @Description: kanban-utils
  */
 import { useHttp } from "http/index";
 import { QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "types/Kanban";
-import { useAddConfig, useDeleteConfig } from "./use-optimistic-options";
+import {
+  useAddConfig,
+  useDeleteConfig,
+  useReorderConfig,
+} from "./use-optimistic-options";
 
 export const useKanbans = (params?: Partial<Kanban>) => {
   const client = useHttp();
@@ -40,4 +44,24 @@ export const useDeleteKanban = (queryKey: QueryKey) => {
       }),
     useDeleteConfig(queryKey)
   );
+};
+
+export interface SortProps {
+  // 要重新排序的item
+  fromId: number;
+  // 目标item
+  referenceId: number;
+  // 放在目标item的前还是后
+  type: "before" | "after";
+  fromKanbanId?: number;
+  toKanbanId?: number;
+}
+export const useReorderKanban = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation((params: SortProps) => {
+    return client("kanbans/reorder", {
+      data: params,
+      method: "POST",
+    });
+  }, useReorderConfig(queryKey));
 };

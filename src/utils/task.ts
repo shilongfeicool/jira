@@ -1,8 +1,9 @@
+import { useReorderConfig } from "./use-optimistic-options";
 /*
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:00:05
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-19 14:31:55
+ * @LastEditTime: 2022-12-20 18:25:42
  * @FilePath: /jira-project/src/utils/task.ts
  * @Description:task
  */
@@ -14,6 +15,7 @@ import {
   useDeleteConfig,
   useEidtConfig,
 } from "./use-optimistic-options";
+import { SortProps } from "./kanban";
 
 export const useTasks = (params?: Partial<Task>) => {
   const client = useHttp();
@@ -63,4 +65,14 @@ export const useDeleteTask = (queryKey: QueryKey) => {
       }),
     useDeleteConfig(queryKey)
   );
+};
+
+export const useReorderTask = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation((params: SortProps) => {
+    return client("tasks/reorder", {
+      data: params,
+      method: "POST",
+    });
+  }, useReorderConfig(queryKey));
 };
