@@ -2,7 +2,7 @@
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 15:57:39
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-20 18:26:00
+ * @LastEditTime: 2022-12-23 14:17:47
  * @FilePath: /jira-project/src/utils/kanban.ts
  * @Description: kanban-utils
  */
@@ -12,7 +12,7 @@ import { Kanban } from "types/Kanban";
 import {
   useAddConfig,
   useDeleteConfig,
-  useReorderConfig,
+  useReorderKanbanConfig,
 } from "./use-optimistic-options";
 
 export const useKanbans = (params?: Partial<Kanban>) => {
@@ -63,5 +63,5 @@ export const useReorderKanban = (queryKey: QueryKey) => {
       data: params,
       method: "POST",
     });
-  }, useReorderConfig(queryKey));
+  }, useReorderKanbanConfig(queryKey));
 };

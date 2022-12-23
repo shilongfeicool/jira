@@ -1,9 +1,9 @@
-import { useReorderConfig } from "./use-optimistic-options";
+import { useReorderTaskConfig } from "./use-optimistic-options";
 /*
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:00:05
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-20 18:25:42
+ * @LastEditTime: 2022-12-23 14:17:32
  * @FilePath: /jira-project/src/utils/task.ts
  * @Description:task
  */
@@ -74,5 +74,5 @@ export const useReorderTask = (queryKey: QueryKey) => {
       data: params,
       method: "POST",
     });
-  }, useReorderConfig(queryKey));
+  }, useReorderTaskConfig(queryKey));
 };
