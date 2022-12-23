@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-21 15:28:06
- * @LastEditTime: 2022-07-15 15:28:19
+ * @LastEditTime: 2022-12-23 16:23:18
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: modal
  * @FilePath: /jira/src/secreens/project-list/project-modal.tsx
@@ -81,11 +81,7 @@ export const ProjectModal = () => {
               <Form.Item label={"负责人"} name={"personId"}>
                 <UserSelect defaultOptionName="负责人" />
               </Form.Item>
-              <Form.Item
-                label={"负责人"}
-                name={"personId"}
-                style={{ textAlign: "right" }}
-              >
+              <Form.Item style={{ textAlign: "right" }}>
                 <Button
                   loading={mutateLoading}
                   type={"primary"}
