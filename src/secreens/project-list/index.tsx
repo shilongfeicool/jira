@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:25
- * @LastEditTime: 2022-08-05 17:00:52
+ * @LastEditTime: 2022-12-23 14:59:51
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: 列表
  * @FilePath: /jira/src/secreens/project-list/index.tsx
@@ -55,4 +55,5 @@ ProjectListSecreent.whyDidYouRender = true;
 const Container = styled.div`
   padding: 3.2rem;
   flex: 1;
+  width: 100%;
 `;

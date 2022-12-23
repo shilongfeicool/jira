@@ -21,7 +21,7 @@ const layout = {
 
 export const TaskModal = () => {
   const [form] = useForm();
-  const { editingTask, aditTaskId, close } = useTaskModal();
+  const { editingTask, editingTaskId, close } = useTaskModal();
   const { mutateAsync: editTask, isLoading: editLoading } = useEditTask(
     useTasksQueryKey()
   );
@@ -44,7 +44,7 @@ export const TaskModal = () => {
       cancelText: "取消",
       title: "确定删除面板吗?",
       onOk() {
-        deleteTask({ id: Number(aditTaskId) });
+        deleteTask({ id: Number(editingTaskId) });
       },
     });
   };
@@ -55,7 +55,7 @@ export const TaskModal = () => {
       cancelText="取消"
       confirmLoading={editLoading}
       title="编辑任务"
-      visible={!!aditTaskId}
+      visible={!!editingTaskId}
       onCancel={onCancel}
       onOk={onOk}
     >

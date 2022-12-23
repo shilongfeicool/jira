@@ -3,7 +3,7 @@ import { useDebounce } from "utils";
  * @Author: 石龙飞 shilongfei@cheyipai.com
  * @Date: 2022-07-22 16:04:27
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @LastEditTime: 2022-12-07 17:48:56
+ * @LastEditTime: 2022-12-23 14:56:37
  * @FilePath: /jira-project/src/secreens/kanban/util.ts
  * @Description: util
  */
@@ -50,19 +50,21 @@ export const useTasksSearchParams = () => {
 export const useTasksQueryKey = () => ["tasks", useTasksSearchParams()];
 
 export const useTaskModal = () => {
-  const [{ aditTaskId }, setEditingTaskId] = useQueryParam(["aditTaskId"]);
-  const { data: editingTask, isLoading } = useTaskDetail(Number(aditTaskId));
+  const [{ editingTaskId }, setEditingTaskId] = useQueryParam([
+    "editingTaskId",
+  ]);
+  const { data: editingTask, isLoading } = useTaskDetail(Number(editingTaskId));
   const startEdit = useCallback(
     (id: number) => {
-      setEditingTaskId({ aditTaskId: id });
+      setEditingTaskId({ editingTaskId: id });
     },
     [setEditingTaskId]
   );
   const close = useCallback(() => {
-    setEditingTaskId({ aditTaskId: "" });
+    setEditingTaskId({ editingTaskId: "" });
   }, [setEditingTaskId]);
   return {
-    aditTaskId,
+    editingTaskId,
     editingTask,
     startEdit,
     close,
