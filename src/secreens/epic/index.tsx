@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-08 17:15:58
- * @LastEditTime: 2022-12-23 15:02:52
+ * @LastEditTime: 2022-12-23 15:31:12
  * @LastEditors: 石龙飞 shilongfei@cheyipai.com
  * @Description: Epic
  * @FilePath: /jira/src/secreens/epic/index.tsx
@@ -14,19 +14,26 @@ import { Button, List } from "antd";
 import dayjs from "dayjs";
 import { useTasks } from "utils/task";
 import { Link } from "react-router-dom";
+import { CreateEpic } from "./create-epic";
+import { useState } from "react";
 
 export const EpicScreen = () => {
   const { data: currentProject } = useProjectInUrl();
   const { data: epics } = useEpics(useEpicSearchParams());
   const { data: tasks } = useTasks({ projectId: currentProject?.id });
   const { mutate: deleteEpic } = useDeleteEpic(useEpicsQueryKey());
+  const [epicCreateOpen, setEpicCreateOpen] = useState(false);
 
   return (
     <ScreenContanier>
-      <h1>{currentProject?.name}任务组</h1>
+      <Row between>
+        <h1>{currentProject?.name}任务组</h1>
+        <Button onClick={() => setEpicCreateOpen(true)}>创建任务组</Button>
+      </Row>
       <List
         dataSource={epics}
         itemLayout="vertical"
+        style={{ overflow: "scroll" }}
         renderItem={(epic) => (
           <List.Item>
             <List.Item.Meta
@@ -62,6 +69,10 @@ export const EpicScreen = () => {
             </div>
           </List.Item>
         )}
+      />
+      <CreateEpic
+        onClose={() => setEpicCreateOpen(false)}
+        visible={epicCreateOpen}
       />
     </ScreenContanier>
   );
