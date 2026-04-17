@@ -33,6 +33,7 @@ export const List = ({ users, ...props }: ListProps) => {
   const pinProject = (id: number) => (pin: boolean) =>
     mutate({ id, pin }).then(props.refresh);
   const dispatch = useDispatch();
+  const [name] = useState('前缀')
   return (
     <Table
       pagination={false}
@@ -53,6 +54,13 @@ export const List = ({ users, ...props }: ListProps) => {
           title: "名称",
           render(value, Project) {
             return <Link to={String(Project.id)}>{Project.name}</Link>;
+          },
+          sorter: (a, b) => a.name.localeCompare(b.name),
+        },
+        {
+          title: "double名称",
+          render(value, Project) {
+            return <Link to={String(Project.id)}>{name + Project.name}</Link>;
           },
           sorter: (a, b) => a.name.localeCompare(b.name),
         },
