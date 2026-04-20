@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2022-01-24 16:03:26
+ * @LastEditTime: 2022-01-27 15:04:00
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /jira/src/unauthenticated-app/index.tsx
+ */
 import { Button, Card, Divider } from "antd";
 import { useState } from "react";
 import { LoginScreen } from "unauthenticated-app/login";
@@ -8,17 +16,16 @@ import left from "assets/left.svg";
 import right from "assets/right.svg";
 import { useDocumentTitle } from "utils";
 // import { Helmet } from "react-helmet";
-/*
- * @Author: your name
- * @Date: 2022-01-24 16:03:26
- * @LastEditTime: 2022-01-27 15:04:00
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /jira/src/unauthenticated-app/index.tsx
- */
+
 export const UnauthenticatedApp = () => {
   const [isRegister, setIsRegister] = useState(false);
   useDocumentTitle("请登录注册以继续");
+  const login = () => {
+    const loading = false;
+    setTimeout(()=>{
+      console.log('loading----', loading)
+    },100)
+  }
   return (
     <Container>
       {/* <Helmet>
