@@ -29,78 +29,92 @@ interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
 }
-export function dealNestADData(
-  arr: IArr,
-  // eslint-disable-next-line default-param-last
-  maxVal: any = -1,
-  allToNum?: boolean,
-  minMaxfiledNames?: { min?: string; max?: string },
-  format?: string,
-  isPad?: boolean
-) {
-  const minPad = ':00';
-  const maxPad = ':59';
-  const minFieldName = minMaxfiledNames?.min || 'min';
-  const maxFieldName = minMaxfiledNames?.max || 'max';
-  if (judgeArr(arr)) {
-    // 排序
-    const selfSort = (a: ILine, b: ILine) => {
-      if ((a.max_mom as Moment) && typeof a.max_mom === 'object') {
-        return a.max_mom.isBefore(b.max_mom) ? -1 : 1;
-      }
-      return Number(a.max) - Number(b.max);
-    };
-    const tempArr = arr
-      .filter((item) => {
-        if (judgeObj(item)) {
-          Object.keys(item).forEach((key) => {
-            if (allToNum) {
-              // eslint-disable-next-line no-param-reassign
-              item[key] = formatNumOrSpace(item[key], true);
-            } else if ([minFieldName, maxFieldName].includes(key)) {
-              if (typeof item[key] !== 'object') {
-                if (format) {
-                  const time = moment(item[key], format);
-                  item[`${key}_mom`] = time;
-                  item[key] = time;
-                } else {
-                  // eslint-disable-next-line no-param-reassign
-                  item[key] = formatNumOrSpace(item[key], true);
-                }
-              } else {
-                const time = (item[key] as Moment).format(format);
-                item[`${key}_mom`] = item[key];
-                const padStr = isPad ? (key === minFieldName ? minPad : maxPad) : '';
-                item[key] = time.concat(padStr);
-              }
-            }
-          });
-        }
-        return item;
-      })
-      .sort(selfSort)
-      .map((item) => {
-        if (format) {
-          delete item.min_mom;
-          delete item.max_mom;
-        }
-        return item;
-      });
-
-    const maxInd = tempArr.findIndex(({ [maxFieldName]: max }) => {
-      if (typeof max === 'object') {
-        return max.format(format) === maxVal;
-      }
-      return isPad ? (max as string).replace(maxPad, '') === maxVal : max === maxVal;
-    });
-
-    const maxObj = tempArr[maxInd];
-    tempArr.splice(maxInd, 1);
-    tempArr.push(maxObj);
-    return tempArr;
+export const openAnotherWindowTab = ({
+  path,
+  query,
+  isOut = false,
+  strWindowName = '_blank',
+}: {
+  path: string;
+  query?: { [key: string]: any };
+  isOut?: boolean;
+  strWindowName?: '_blank' | '_self';
+}) => {
+  const paramsStr = query ? `?${QS.stringify(query)}` : '';
+  const { origin, pathname, protocol } = window.location;
+  const dealPathWithProtocol = isOut && path.split(':').length < 2 && protocol ? `${protocol}${path}` : path;
+  // 如果是本窗口打开 那就直接改href
+  if (strWindowName === '_self') {
+    window.open(dealPathWithProtocol + paramsStr, strWindowName);
+    return;
   }
-  return arr;
-}
+  if (!isLocal) {
+    // 其他环境拼接统一工作台地址 可能会出现跨域问题
+    let base = '';
+    try {
+      base = window.parent.location.href;
+    } catch (e) {
+      base = document.referrer;
+    }
+
+    const prefix = process.env.MUJI_APP_CHENIU_PLATFORM;
+    const localProjectUrl = `${prefix?.substring(0, prefix.length - 1)}${path}${paramsStr}`;
+    // 个别Mac机型, 无法通过 document.referrer 获取完成路径
+    if (base.indexOf('key') === -1) {
+      const authKey = getAuthCodeByPath(window.location.href);
+      base = `${process.env.MUJI_APP_GZT_URL}?key=${authKey}&url=${localProjectUrl}`;
+    }
+    try {
+      const host = base.split('?')[0];
+      const pathName = base.split('?')[1];
+      const paramList = pathName.split('&');
+
+      // const url = paramList.filter((item: string) => item.indexOf('url') > -1)[0];
+      // const url_decode = decodeURIComponent(url.split('=')[1]);
+      // const url_host = url_decode.split('#')[0];
+      const relativePath = !isOut ? localProjectUrl : `${dealPathWithProtocol}${paramsStr}`; // 项目相对地址和参数
+
+      // 替换key
+      if (!isOut) {
+        const newKey = getUrlKey(relativePath);
+        console.log('newKey', newKey);
+        if (newKey) {
+          paramList[0] = `key=${newKey}`;
+        }
+      }
+
+      // 拼接URL
+      const paramArr = paramList.map((item: string) => {
+        let newItem = item;
+        if (item.indexOf('url') > -1) {
+          newItem = `url=${encodeURIComponent(relativePath)}`;
+        }
+        return newItem;
+      });
+      let pathname_paramArr = '';
+      paramArr.forEach((item: string, index: number) => {
+        if (index === paramArr.length - 1) {
+          pathname_paramArr += `${item}`;
+        } else {
+          pathname_paramArr += `${item}&`;
+        }
+      });
+      console.log('--_blank 页面即将跳转--', `${host}?${pathname_paramArr}`);
+      window.open(`${host}?${pathname_paramArr}`);
+    } catch (e) {
+      dispatch.router.push({
+        path: dealPathWithProtocol,
+        query,
+      });
+      console.error('打开页面出错', e);
+    }
+  } else {
+    // 本地开发环境直接打开项目相对地址
+    const relativePath = !isOut ? `${origin}${pathname}#${dealPathWithProtocol}${paramsStr}` : `${dealPathWithProtocol}${paramsStr}`; // 项目相对地址和参数
+    console.log('_blank 本地开发环境直接打开项目相对地址');
+    window.open(relativePath);
+  }
+};
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   const pinProject = (id: number) => (pin: boolean) =>
