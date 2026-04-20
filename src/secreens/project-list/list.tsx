@@ -6,6 +6,7 @@
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /jira/src/secreens/project-list/list.tsx
  */
+import { useState, useEfect } from 'react';
 import { Dropdown, Menu, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { User } from "./search-panel";
@@ -35,6 +36,9 @@ export const List = ({ users, ...props }: ListProps) => {
   const dispatch = useDispatch();
   const [prefix] = useState('前缀显示')
   const [sufix] = useState('后缀显示')
+  useEfect(() => {
+    console.log('mounted-------')
+  },[]);
   return (
     <Table
       pagination={false}
@@ -61,7 +65,13 @@ export const List = ({ users, ...props }: ListProps) => {
         {
           title: "double名称",
           render(value, Project) {
-            return <Link to={String(Project.id)}>{prefix + Project.name + sufix}</Link>;
+            return prefix + Project.name + sufix;
+          }
+        },
+        {
+          title: "repeat名称",
+          render(value, Project) {
+            return prefix + Project.name + sufix;
           }
         },
         {
