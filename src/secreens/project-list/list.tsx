@@ -30,28 +30,59 @@ interface ListProps extends TableProps<Project> {
   refresh?: () => void;
 }
 /**
- * 获取url参数
- * @param name 参数key
+ * @desc 滚动到页面顶部
  */
-export const fetchParams = (name: string) => {
-  if (!name) return '';
-  if (typeof window !== 'undefined') {
-    const search = window.location.search || '';
-    const params = new URLSearchParams(search);
-    const fromSearch = params.get(name);
-    if (fromSearch !== null) return fromSearch;
-    const hash = window.location.hash || '';
-    const qIndex = hash.indexOf('?');
-    if (qIndex >= 0) {
-      const hashParams = new URLSearchParams(hash.slice(qIndex + 1));
-      const fromHash = hashParams.get(name);
-      if (fromHash !== null) return fromHash;
-    }
+export const scrollToPageTop = (className = 'page-scroll-container') => {
+  const dom = document.getElementsByClassName(className)[0];
+  if (dom) {
+    dom.scrollTop = 0;
   }
-  const inst = getCurrentInstance();
-  const routerParams = (inst?.router as any)?.params || {};
-  const v = routerParams[name];
-  return typeof v === 'string' ? v : '';
+};
+
+/**
+ * @desc 新开窗口打开页面
+ * @param path: 路径地址
+ * @param query: 查询参数
+ * @param isOut: 是否是外部链接
+ * @param strWindowName: window.open窗口名称
+ */
+const getAuthCodeByPath = (path: string) => {
+  const pathAuthArr: any = JSON.parse(sessionStorage.getItem('pathAuthArr') || '[]');
+  const decodePath = decodeURIComponent(path);
+  const findCodeArr: [{ link: string; code: string }] = pathAuthArr.filter(
+    (item: { link: string; code: string }) => item.link === decodePath
+  );
+  return findCodeArr && findCodeArr.length > 0 ? findCodeArr[0].code : 'null';
+};
+
+/** @desc 获取key */
+const getUrlKey = (originUrl: string) => {
+  const url = originUrl.split('?')[0];
+  const urlSplitArr = url.split('/');
+  urlSplitArr.pop();
+  const urlWithoutLastRoute = urlSplitArr.join('/');
+
+  const menus: any = JSON.parse(sessionStorage.getItem('pathAuthArr') || '');
+  const result: any = [];
+  let exactly = false;
+  (menus || []).forEach((item: any) => {
+    const { link } = item || {};
+    if (url.toLowerCase() === link.toLowerCase()) {
+      exactly = true;
+      result.push({ ...item, exactly: true });
+      return;
+    }
+    if (link.toLowerCase() === urlWithoutLastRoute.toLowerCase()) {
+      result.push(item);
+    }
+  });
+  if (exactly) {
+    return (result.filter(({ exactly }: any) => !!exactly)[0] || {}).code;
+  }
+  if (result.length >= 1) {
+    return (result[0] || {}).code;
+  }
+  return '';
 };
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
