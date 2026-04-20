@@ -1,13 +1,12 @@
 /*
  * @Author: your name
  * @Date: 2021-12-12 16:45:56
- * @LastEditTime: 2022-07-12 17:44:34
- * @LastEditors: 石龙飞 shilongfei@cheyipai.com
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @LastEditTime: 2026-04-20
+ * @Description: Project List Component - Displays projects in a table with editing capabilities
  * @FilePath: /jira/src/secreens/project-list/list.tsx
  */
-import { useState, useEfect } from 'react';
-import { Dropdown, Menu, Table, TableProps } from "antd";
+import { useState, useCallback } from 'react';
+import { Dropdown, Menu, Table, TableProps, message } from "antd";
 import dayjs from "dayjs";
 import { User } from "./search-panel";
 import { Link } from "react-router-dom";
@@ -16,7 +15,17 @@ import { useEditProject } from "utils/project";
 import { ButtonNoPadding } from "components/lib";
 import { useDispatch } from "react-redux";
 import { projectListActions } from "./project-list.slice";
-// react-router与react-router-dom的关系,类似与react与react-dom/react-native/react-vr的关系
+
+// Constants
+const PREFIX_DISPLAY = '前缀显示';
+const SUFFIX_DISPLAY = '后缀显示';
+const ADMIN_ROLE = '管理员';
+const UNKNOWN_USER = '未知';
+const NO_DATE = '无';
+const DATE_FORMAT = "YYYY-MM-DD";
+const MENU_EDIT_KEY = 'edit';
+const EDIT_LABEL = '编辑';
+
 export interface Project {
   id: number;
   name: string;
@@ -25,190 +34,132 @@ export interface Project {
   organization: string;
   created: number;
 }
+
 interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
 }
-export const openAnotherWindowTab = ({
-  path,
-  query,
-  isOut = false,
-  strWindowName = '_blank',
-}: {
-  path: string;
-  query?: { [key: string]: any };
-  isOut?: boolean;
-  strWindowName?: '_blank' | '_self';
-}) => {
-  const paramsStr = query ? `?${QS.stringify(query)}` : '';
-  const { origin, pathname, protocol } = window.location;
-  const dealPathWithProtocol = isOut && path.split(':').length < 2 && protocol ? `${protocol}${path}` : path;
-  // 如果是本窗口打开 那就直接改href
-  if (strWindowName === '_self') {
-    window.open(dealPathWithProtocol + paramsStr, strWindowName);
-    return;
-  }
-  if (!isLocal) {
-    // 其他环境拼接统一工作台地址 可能会出现跨域问题
-    let base = '';
-    try {
-      base = window.parent.location.href;
-    } catch (e) {
-      base = document.referrer;
-    }
 
-    const prefix = process.env.MUJI_APP_CHENIU_PLATFORM;
-    const localProjectUrl = `${prefix?.substring(0, prefix.length - 1)}${path}${paramsStr}`;
-    // 个别Mac机型, 无法通过 document.referrer 获取完成路径
-    if (base.indexOf('key') === -1) {
-      const authKey = getAuthCodeByPath(window.location.href);
-      base = `${process.env.MUJI_APP_GZT_URL}?key=${authKey}&url=${localProjectUrl}`;
-    }
-    try {
-      const host = base.split('?')[0];
-      const pathName = base.split('?')[1];
-      const paramList = pathName.split('&');
-
-      // const url = paramList.filter((item: string) => item.indexOf('url') > -1)[0];
-      // const url_decode = decodeURIComponent(url.split('=')[1]);
-      // const url_host = url_decode.split('#')[0];
-      const relativePath = !isOut ? localProjectUrl : `${dealPathWithProtocol}${paramsStr}`; // 项目相对地址和参数
-
-      // 替换key
-      if (!isOut) {
-        const newKey = getUrlKey(relativePath);
-        console.log('newKey', newKey);
-        if (newKey) {
-          paramList[0] = `key=${newKey}`;
-        }
-      }
-
-      // 拼接URL
-      const paramArr = paramList.map((item: string) => {
-        let newItem = item;
-        if (item.indexOf('url') > -1) {
-          newItem = `url=${encodeURIComponent(relativePath)}`;
-        }
-        return newItem;
-      });
-      let pathname_paramArr = '';
-      paramArr.forEach((item: string, index: number) => {
-        if (index === paramArr.length - 1) {
-          pathname_paramArr += `${item}`;
-        } else {
-          pathname_paramArr += `${item}&`;
-        }
-      });
-      console.log('--_blank 页面即将跳转--', `${host}?${pathname_paramArr}`);
-      window.open(`${host}?${pathname_paramArr}`);
-    } catch (e) {
-      dispatch.router.push({
-        path: dealPathWithProtocol,
-        query,
-      });
-      console.error('打开页面出错', e);
-    }
-  } else {
-    // 本地开发环境直接打开项目相对地址
-    const relativePath = !isOut ? `${origin}${pathname}#${dealPathWithProtocol}${paramsStr}` : `${dealPathWithProtocol}${paramsStr}`; // 项目相对地址和参数
-    console.log('_blank 本地开发环境直接打开项目相对地址');
-    window.open(relativePath);
-  }
+/**
+ * Find user name by id
+ * @param userId - User ID to search
+ * @param users - List of users
+ * @returns User name or '未知'
+ */
+const findUserName = (userId: number, users: User[]): string => {
+  return users.find((user) => user.id === userId)?.name || UNKNOWN_USER;
 };
+
+/**
+ * Format date to readable format
+ * @param timestamp - Unix timestamp
+ * @returns Formatted date string
+ */
+const formatDate = (timestamp: number | undefined): string => {
+  return timestamp ? dayjs(timestamp).format(DATE_FORMAT) : NO_DATE;
+};
+
 export const List = ({ users, ...props }: ListProps) => {
-  const { mutate } = useEditProject();
-  const pinProject = (id: number) => (pin: boolean) =>
-    mutate({ id, pin }).then(props.refresh);
+  const { mutate: editProject } = useEditProject();
   const dispatch = useDispatch();
-  const [prefix] = useState('前缀显示')
-  const [sufix] = useState('后缀显示')
+
+  /**
+   * Handle project pin/unpin
+   */
+  const handlePinProject = useCallback(
+    (id: number) => (pin: boolean) => {
+      editProject({ id, pin }).then(() => {
+        props.refresh?.();
+        message.success(pin ? '已置顶' : '已取消置顶');
+      }).catch(() => {
+        message.error('操作失败，请重试');
+      });
+    },
+    [editProject, props]
+  );
+
+  /**
+   * Handle edit project
+   */
+  const handleEditProject = useCallback(() => {
+    dispatch(projectListActions.openProjectModal());
+  }, [dispatch]);
+
+  const columns = [
+    {
+      title: <Pin checked disabled />,
+      width: 50,
+      render: (_, project: Project) => (
+        <Pin
+          checked={project.pin}
+          onCheckedChange={handlePinProject(project.id)}
+        />
+      ),
+    },
+    {
+      title: "名称",
+      dataIndex: "name",
+      render: (name: string, project: Project) => (
+        <Link to={String(project.id)}>{name}</Link>
+      ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "显示名称",
+      render: (_, project: Project) => (
+        <span>{PREFIX_DISPLAY}{project.name}{SUFFIX_DISPLAY}</span>
+      ),
+    },
+    {
+      title: "用户",
+      width: 80,
+      render: () => ADMIN_ROLE,
+    },
+    {
+      title: "部门",
+      dataIndex: "organization",
+      width: 150,
+    },
+    {
+      title: "负责人",
+      render: (_, project: Project) => (
+        <span>{findUserName(project.personId, users)}</span>
+      ),
+      width: 120,
+    },
+    {
+      title: "创建时间",
+      render: (_, project: Project) => (
+        <span>{formatDate(project.created)}</span>
+      ),
+      width: 130,
+    },
+    {
+      render: () => (
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item key={MENU_EDIT_KEY}>
+                <ButtonNoPadding type="link" onClick={handleEditProject}>
+                  {EDIT_LABEL}
+                </ButtonNoPadding>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <ButtonNoPadding type="link">...</ButtonNoPadding>
+        </Dropdown>
+      ),
+      width: 60,
+      align: "center",
+    },
+  ];
+
   return (
     <Table
       pagination={false}
       rowKey="id"
-      columns={[
-        {
-          title: <Pin checked disabled />,
-          render(value, project) {
-            return (
-              <Pin
-                checked={project.pin}
-                onCheckedChange={pinProject(project.id)}
-              />
-            );
-          },
-        },
-        {
-          title: "名称",
-          render(value, Project) {
-            return <Link to={String(Project.id)}>{Project.name}</Link>;
-          },
-          sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-          title: "repeat名称",
-          render(value, Project) {
-            return prefix + Project.name + sufix;
-          }
-        },
-        {
-          title: "用户",
-          render(value, Project) {
-            return '管理员';
-          }
-        },
-        {
-          title: "部门",
-          dataIndex: "organization",
-        },
-        {
-          title: "负责人",
-          render(value, project) {
-            return (
-              <span>
-                {users.find((user) => user.id === project.personId)?.name ||
-                  "未知"}
-              </span>
-            );
-          },
-        },
-        {
-          title: "创建时间",
-          render(value, project) {
-            return (
-              <span>
-                {project.created
-                  ? dayjs(project.created).format("YYYY-MM-DD")
-                  : "无"}
-              </span>
-            );
-          },
-        },
-        {
-          render(value, project) {
-            return (
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item key={"edit"}>
-                      <ButtonNoPadding
-                        type="link"
-                        onClick={() =>
-                          dispatch(projectListActions.openProjectModal())
-                        }
-                      >
-                        编辑
-                      </ButtonNoPadding>
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <ButtonNoPadding type="link">...</ButtonNoPadding>
-              </Dropdown>
-            );
-          },
-        },
-      ]}
+      columns={columns}
       {...props}
     />
   );
