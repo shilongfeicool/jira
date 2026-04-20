@@ -5,7 +5,7 @@
  * @Description: Project List Component - Displays projects in a table with editing capabilities
  * @FilePath: /jira/src/secreens/project-list/list.tsx
  */
-import { useState, useCallback } from 'react';
+import { useMemo, useCallback, memo } from 'react';
 import { Dropdown, Menu, Table, TableProps, message } from "antd";
 import dayjs from "dayjs";
 import { User } from "./search-panel";
@@ -59,7 +59,74 @@ const formatDate = (timestamp: number | undefined): string => {
   return timestamp ? dayjs(timestamp).format(DATE_FORMAT) : NO_DATE;
 };
 
-export const List = ({ users, ...props }: ListProps) => {
+/**
+ * Pin Column Component
+ */
+const PinColumn = memo(({ project, onPinChange }: { project: Project; onPinChange: (pin: boolean) => void }) => (
+  <Pin
+    checked={project.pin}
+    onCheckedChange={onPinChange}
+  />
+));
+PinColumn.displayName = 'PinColumn';
+
+/**
+ * Name Column Component
+ */
+const NameColumn = memo(({ project }: { project: Project }) => (
+  <Link to={String(project.id)}>{project.name}</Link>
+));
+NameColumn.displayName = 'NameColumn';
+
+/**
+ * Display Name Column Component
+ */
+const DisplayNameColumn = memo(({ name }: { name: string }) => (
+  <span>{PREFIX_DISPLAY}{name}{SUFFIX_DISPLAY}</span>
+));
+DisplayNameColumn.displayName = 'DisplayNameColumn';
+
+/**
+ * Owner Column Component
+ */
+const OwnerColumn = memo(({ personId, users }: { personId: number; users: User[] }) => (
+  <span>{findUserName(personId, users)}</span>
+));
+OwnerColumn.displayName = 'OwnerColumn';
+
+/**
+ * Created Date Column Component
+ */
+const CreatedDateColumn = memo(({ timestamp }: { timestamp: number | undefined }) => (
+  <span>{formatDate(timestamp)}</span>
+));
+CreatedDateColumn.displayName = 'CreatedDateColumn';
+
+/**
+ * Action Menu Component
+ */
+const ActionMenu = memo(({ onEdit }: { onEdit: () => void }) => (
+  <Menu>
+    <Menu.Item key={MENU_EDIT_KEY}>
+      <ButtonNoPadding type="link" onClick={onEdit}>
+        {EDIT_LABEL}
+      </ButtonNoPadding>
+    </Menu.Item>
+  </Menu>
+));
+ActionMenu.displayName = 'ActionMenu';
+
+/**
+ * Action Column Component
+ */
+const ActionColumn = memo(({ onEdit }: { onEdit: () => void }) => (
+  <Dropdown overlay={<ActionMenu onEdit={onEdit} />}>
+    <ButtonNoPadding type="link">...</ButtonNoPadding>
+  </Dropdown>
+));
+ActionColumn.displayName = 'ActionColumn';
+
+export const List = memo(({ users, refresh, ...props }: ListProps) => {
   const { mutate: editProject } = useEditProject();
   const dispatch = useDispatch();
 
@@ -68,14 +135,16 @@ export const List = ({ users, ...props }: ListProps) => {
    */
   const handlePinProject = useCallback(
     (id: number) => (pin: boolean) => {
-      editProject({ id, pin }).then(() => {
-        props.refresh?.();
-        message.success(pin ? '已置顶' : '已取消置顶');
-      }).catch(() => {
-        message.error('操作失败，请重试');
-      });
+      editProject({ id, pin })
+        .then(() => {
+          refresh?.();
+          message.success(pin ? '已置顶' : '已取消置顶');
+        })
+        .catch(() => {
+          message.error('操作失败，请重试');
+        });
     },
-    [editProject, props]
+    [editProject, refresh]
   );
 
   /**
@@ -85,75 +154,60 @@ export const List = ({ users, ...props }: ListProps) => {
     dispatch(projectListActions.openProjectModal());
   }, [dispatch]);
 
-  const columns = [
-    {
-      title: <Pin checked disabled />,
-      width: 50,
-      render: (_, project: Project) => (
-        <Pin
-          checked={project.pin}
-          onCheckedChange={handlePinProject(project.id)}
-        />
-      ),
-    },
-    {
-      title: "名称",
-      dataIndex: "name",
-      render: (name: string, project: Project) => (
-        <Link to={String(project.id)}>{name}</Link>
-      ),
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "显示名称",
-      render: (_, project: Project) => (
-        <span>{PREFIX_DISPLAY}{project.name}{SUFFIX_DISPLAY}</span>
-      ),
-    },
-    {
-      title: "用户",
-      width: 80,
-      render: () => ADMIN_ROLE,
-    },
-    {
-      title: "部门",
-      dataIndex: "organization",
-      width: 150,
-    },
-    {
-      title: "负责人",
-      render: (_, project: Project) => (
-        <span>{findUserName(project.personId, users)}</span>
-      ),
-      width: 120,
-    },
-    {
-      title: "创建时间",
-      render: (_, project: Project) => (
-        <span>{formatDate(project.created)}</span>
-      ),
-      width: 130,
-    },
-    {
-      render: () => (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key={MENU_EDIT_KEY}>
-                <ButtonNoPadding type="link" onClick={handleEditProject}>
-                  {EDIT_LABEL}
-                </ButtonNoPadding>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <ButtonNoPadding type="link">...</ButtonNoPadding>
-        </Dropdown>
-      ),
-      width: 60,
-      align: "center",
-    },
-  ];
+  /**
+   * Memoized columns definition
+   */
+  const columns = useMemo(
+    () => [
+      {
+        title: <Pin checked disabled />,
+        width: 50,
+        render: (_: unknown, project: Project) => (
+          <PinColumn project={project} onPinChange={handlePinProject(project.id)} />
+        ),
+      },
+      {
+        title: "名称",
+        dataIndex: "name",
+        render: (_: unknown, project: Project) => <NameColumn project={project} />,
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: "显示名称",
+        render: (_: unknown, project: Project) => <DisplayNameColumn name={project.name} />,
+      },
+      {
+        title: "用户",
+        width: 80,
+        render: () => ADMIN_ROLE,
+      },
+      {
+        title: "部门",
+        dataIndex: "organization",
+        width: 150,
+      },
+      {
+        title: "负责人",
+        render: (_: unknown, project: Project) => (
+          <OwnerColumn personId={project.personId} users={users} />
+        ),
+        width: 120,
+      },
+      {
+        title: "创建时间",
+        render: (_: unknown, project: Project) => (
+          <CreatedDateColumn timestamp={project.created} />
+        ),
+        width: 130,
+      },
+      {
+        render: () => <ActionColumn onEdit={handleEditProject} />,
+        width: 60,
+        align: "center" as const,
+      },
+    ],
+    [handlePinProject, handleEditProject, users]
+  );
 
   return (
     <Table
@@ -163,4 +217,6 @@ export const List = ({ users, ...props }: ListProps) => {
       {...props}
     />
   );
-};
+});
+
+List.displayName = 'ProjectList';
