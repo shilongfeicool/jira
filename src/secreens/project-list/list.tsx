@@ -29,61 +29,78 @@ interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
 }
-/**
- * @desc 滚动到页面顶部
- */
-export const scrollToPageTop = (className = 'page-scroll-container') => {
-  const dom = document.getElementsByClassName(className)[0];
-  if (dom) {
-    dom.scrollTop = 0;
-  }
-};
+export function dealNestADData(
+  arr: IArr,
+  // eslint-disable-next-line default-param-last
+  maxVal: any = -1,
+  allToNum?: boolean,
+  minMaxfiledNames?: { min?: string; max?: string },
+  format?: string,
+  isPad?: boolean
+) {
+  const minPad = ':00';
+  const maxPad = ':59';
+  const minFieldName = minMaxfiledNames?.min || 'min';
+  const maxFieldName = minMaxfiledNames?.max || 'max';
+  if (judgeArr(arr)) {
+    // 排序
+    const selfSort = (a: ILine, b: ILine) => {
+      if ((a.max_mom as Moment) && typeof a.max_mom === 'object') {
+        return a.max_mom.isBefore(b.max_mom) ? -1 : 1;
+      }
+      return Number(a.max) - Number(b.max);
+    };
+    const tempArr = arr
+      .filter((item) => {
+        if (judgeObj(item)) {
+          Object.keys(item).forEach((key) => {
+            if (allToNum) {
+              // eslint-disable-next-line no-param-reassign
+              item[key] = formatNumOrSpace(item[key], true);
+            } else if ([minFieldName, maxFieldName].includes(key)) {
+              if (typeof item[key] !== 'object') {
+                if (format) {
+                  const time = moment(item[key], format);
+                  item[`${key}_mom`] = time;
+                  item[key] = time;
+                } else {
+                  // eslint-disable-next-line no-param-reassign
+                  item[key] = formatNumOrSpace(item[key], true);
+                }
+              } else {
+                const time = (item[key] as Moment).format(format);
+                item[`${key}_mom`] = item[key];
+                const padStr = isPad ? (key === minFieldName ? minPad : maxPad) : '';
+                item[key] = time.concat(padStr);
+              }
+            }
+          });
+        }
+        return item;
+      })
+      .sort(selfSort)
+      .map((item) => {
+        if (format) {
+          delete item.min_mom;
+          delete item.max_mom;
+        }
+        return item;
+      });
 
-/**
- * @desc 新开窗口打开页面
- * @param path: 路径地址
- * @param query: 查询参数
- * @param isOut: 是否是外部链接
- * @param strWindowName: window.open窗口名称
- */
-const getAuthCodeByPath = (path: string) => {
-  const pathAuthArr: any = JSON.parse(sessionStorage.getItem('pathAuthArr') || '[]');
-  const decodePath = decodeURIComponent(path);
-  const findCodeArr: [{ link: string; code: string }] = pathAuthArr.filter(
-    (item: { link: string; code: string }) => item.link === decodePath
-  );
-  return findCodeArr && findCodeArr.length > 0 ? findCodeArr[0].code : 'null';
-};
+    const maxInd = tempArr.findIndex(({ [maxFieldName]: max }) => {
+      if (typeof max === 'object') {
+        return max.format(format) === maxVal;
+      }
+      return isPad ? (max as string).replace(maxPad, '') === maxVal : max === maxVal;
+    });
 
-/** @desc 获取key */
-const getUrlKey = (originUrl: string) => {
-  const url = originUrl.split('?')[0];
-  const urlSplitArr = url.split('/');
-  urlSplitArr.pop();
-  const urlWithoutLastRoute = urlSplitArr.join('/');
-
-  const menus: any = JSON.parse(sessionStorage.getItem('pathAuthArr') || '');
-  const result: any = [];
-  let exactly = false;
-  (menus || []).forEach((item: any) => {
-    const { link } = item || {};
-    if (url.toLowerCase() === link.toLowerCase()) {
-      exactly = true;
-      result.push({ ...item, exactly: true });
-      return;
-    }
-    if (link.toLowerCase() === urlWithoutLastRoute.toLowerCase()) {
-      result.push(item);
-    }
-  });
-  if (exactly) {
-    return (result.filter(({ exactly }: any) => !!exactly)[0] || {}).code;
+    const maxObj = tempArr[maxInd];
+    tempArr.splice(maxInd, 1);
+    tempArr.push(maxObj);
+    return tempArr;
   }
-  if (result.length >= 1) {
-    return (result[0] || {}).code;
-  }
-  return '';
-};
+  return arr;
+}
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   const pinProject = (id: number) => (pin: boolean) =>
