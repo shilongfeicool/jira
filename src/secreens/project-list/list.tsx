@@ -30,28 +30,35 @@ interface ListProps extends TableProps<Project> {
   refresh?: () => void;
 }
 /**
- * 获取url参数
- * @param name 参数key
+ * @name 设置localStorage
+ * @param key
+ * @param value
  */
-export const fetchParams = (name: string) => {
-  if (!name) return '';
-  if (typeof window !== 'undefined') {
-    const search = window.location.search || '';
-    const params = new URLSearchParams(search);
-    const fromSearch = params.get(name);
-    if (fromSearch !== null) return fromSearch;
-    const hash = window.location.hash || '';
-    const qIndex = hash.indexOf('?');
-    if (qIndex >= 0) {
-      const hashParams = new URLSearchParams(hash.slice(qIndex + 1));
-      const fromHash = hashParams.get(name);
-      if (fromHash !== null) return fromHash;
-    }
+export const setItem = (key: string, value: unknown): void => {
+  if (typeof value === 'string') {
+    window.localStorage.setItem(key, value);
+  } else {
+    window.localStorage.setItem(key, JSON.stringify(value));
   }
-  const inst = getCurrentInstance();
-  const routerParams = (inst?.router as any)?.params || {};
-  const v = routerParams[name];
-  return typeof v === 'string' ? v : '';
+};
+/**
+ * @name 获取localStorage
+ * @param key
+ * @returns
+ */
+export const getItem = (key: string) => {
+  const value = window.localStorage.getItem(key);
+  if (value) {
+    return JSON.parse(value);
+  }
+  return null;
+};
+/**
+ * @name 删除localStorage
+ * @param key
+ */
+export const removeItem = (key: string) => {
+  window.localStorage.removeItem(key);
 };
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
@@ -84,7 +91,7 @@ export const List = ({ users, ...props }: ListProps) => {
           sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
-          title: "repeat名称",
+          title: "repeat名称test",
           render(value, Project) {
             return prefix + Project.name + sufix;
           }
