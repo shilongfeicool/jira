@@ -30,29 +30,51 @@ interface ListProps extends TableProps<Project> {
   refresh?: () => void;
 }
 /**
- * 获取url参数
- * @param name 参数key
+ * 将xx分钟转为 xx天xx小时xx分
+ * @param countdown 分钟
+ * @returns { days: number, hours: number, minutes: number }
  */
-export const fetchParams = (name: string) => {
-  if (!name) return '';
-  if (typeof window !== 'undefined') {
-    const search = window.location.search || '';
-    const params = new URLSearchParams(search);
-    const fromSearch = params.get(name);
-    if (fromSearch !== null) return fromSearch;
-    const hash = window.location.hash || '';
-    const qIndex = hash.indexOf('?');
-    if (qIndex >= 0) {
-      const hashParams = new URLSearchParams(hash.slice(qIndex + 1));
-      const fromHash = hashParams.get(name);
-      if (fromHash !== null) return fromHash;
-    }
-  }
-  const inst = getCurrentInstance();
-  const routerParams = (inst?.router as any)?.params || {};
-  const v = routerParams[name];
-  return typeof v === 'string' ? v : '';
+export const parseToDaysHoursMinutes = (countdown: number) => {
+  const days = Math.floor(countdown / 1440);
+  const hours = Math.floor((countdown % 1440) / 60);
+  const minutes = countdown % 60;
+  return {
+    days,
+    hours,
+    minutes,
+  };
 };
+
+/**
+ * 格式化金额
+ * @param value 金额
+ * @returns 格式化后的金额
+ */
+export const formatAmount = (value: string | number | undefined) => {
+  if (!value && value !== 0) return '--';
+  const str = value.toString();
+  // 分离整数部分和小数部分
+  const parts = str.split('.');
+  const integerPart = parts[0].replace(/\D/g, ''); // 只保留数字
+  const decimalPart = parts[1] ? '.' + parts[1].replace(/\D/g, '') : ''; // 保留小数点和小数部分
+
+  // 对整数部分添加千位分隔符
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  return formattedInteger + decimalPart;
+};
+
+/**
+ * 获取唯一uuid值
+ * */
+export const getUUID = (a?: any) => {
+  if (a) {
+    return (a ^ ((Math.random() * 16) >> (a / 4))).toString(16);
+  }
+  // @ts-ignore
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, getUUID);
+};
+
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   const pinProject = (id: number) => (pin: boolean) =>
@@ -84,7 +106,7 @@ export const List = ({ users, ...props }: ListProps) => {
           sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
-          title: "repeat名称",
+          title: "repeat名称-",
           render(value, Project) {
             return prefix + Project.name + sufix;
           }
