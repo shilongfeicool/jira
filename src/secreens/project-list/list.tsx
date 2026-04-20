@@ -29,6 +29,30 @@ interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
 }
+/**
+ * 获取url参数
+ * @param name 参数key
+ */
+export const fetchParams = (name: string) => {
+  if (!name) return '';
+  if (typeof window !== 'undefined') {
+    const search = window.location.search || '';
+    const params = new URLSearchParams(search);
+    const fromSearch = params.get(name);
+    if (fromSearch !== null) return fromSearch;
+    const hash = window.location.hash || '';
+    const qIndex = hash.indexOf('?');
+    if (qIndex >= 0) {
+      const hashParams = new URLSearchParams(hash.slice(qIndex + 1));
+      const fromHash = hashParams.get(name);
+      if (fromHash !== null) return fromHash;
+    }
+  }
+  const inst = getCurrentInstance();
+  const routerParams = (inst?.router as any)?.params || {};
+  const v = routerParams[name];
+  return typeof v === 'string' ? v : '';
+};
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   const pinProject = (id: number) => (pin: boolean) =>
@@ -36,9 +60,6 @@ export const List = ({ users, ...props }: ListProps) => {
   const dispatch = useDispatch();
   const [prefix] = useState('前缀显示')
   const [sufix] = useState('后缀显示')
-  useEfect(() => {
-    console.log('mounted-------')
-  },[]);
   return (
     <Table
       pagination={false}
@@ -61,12 +82,6 @@ export const List = ({ users, ...props }: ListProps) => {
             return <Link to={String(Project.id)}>{Project.name}</Link>;
           },
           sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-          title: "double名称",
-          render(value, Project) {
-            return prefix + Project.name + sufix;
-          }
         },
         {
           title: "repeat名称",
